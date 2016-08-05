@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <title>PLACE HOLDER2</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+</head>
+
+<body>
+    <textarea id="test"></textarea>
+    <br />
+    <label id="text">This is Pressure Page</label>
+    <br />
+    <br />
+
+    <div class="panel panel-success">
+        <div class="panel-heading">Your current Prssure</div>
+        <div class="panel-body">
+            <br />
+            <label id="currentPressure"> </label>
+            <br />
+            <br />
+        </div>
+    </div>
+
+
+    <div class="panel panel-info">
+        <div class="panel-heading">What is Pressure?</div>
+        <div class="panel-body">
+          <p>
+          This is to explain what is Pressure.
+          </p>
+        </div>
+    </div>
+
+    <div class="panel panel-warning">
+      <div>
+        <button onclick = giveSuggestion();>Show Suggestion</button> <br />
+      </div>
+        <div class="panel-heading">Suggestion</div>
+        <div class="panel-body">
+            <label id="suggestion"> </label>
+        </div>
+    </div>
+
+    <div class="panel panel-danger">
+      <div class="panel-heading">History of info</div>
+        <div class="panel-body">
+          <textarea id="history"></textarea>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        var currentMessage;
+        var currentPressureLabel = $("#currentPressure");
+        var pressure = 0;
+        var suggestionLabel = $("#suggestion");
+        var lbl = '';
+        var date;
+        var pressureAndDateArr = [];
+
+        $(document).ready(function() {
+            currentPressureLabel.text(pressure);
+        });
+
+        setInterval(function() {
+            $.ajax({
+                url: 'http://10.32.176.4/HP'
+            }).done(function(info) {
+                if (info !== currentMessage) {
+                    checkInput(info);
+                    var oldChat = $('#test').val();
+                    var newChat = (oldChat + '\n' + info);
+                    $("#test").html(newChat);
+                    currentMessage = info;
+
+                }
+            })
+        }, 1000);
+
+        function checkInput(input) {
+            var inputArr = input.split(",");
+            if (inputArr[0] == '4') {
+                recievepressure(inputArr[1]);
+            }
+        }
+
+        function recievepressure(info) {
+            pressure = info;
+            date = new Date();
+            var pressureTime = date.toLocaleTimeString() + ' ' + date.toDateString();
+            pressureAndDateArr.push([pressure, pressureTime]);
+            updateHistory(pressure + ' ' + pressureTime);
+            currentPressureLabel.text(pressure + '');
+        }
+
+        function giveSuggestion() {
+            var averagePressure = findAverage();
+            if(Number.isNaN(averagePressure))
+              suggestionLabel.text('No information');
+            else if (averagePressure >= 30 && averagePressure < 55) {
+                suggestionLabel.text('Average air pressure: ' + averagePressure + '- Good');
+            } else if (averagePressure < 50) {
+                suggestionLabel.text('Average air pressure: ' + averagePressure + '- Low');
+            } else {
+                suggestionLabel.text('Average air pressure: ' + averagePressure + ' -High');
+            }
+        }
+
+        function findAverage() {
+          var sum = 0;
+          for(var i = 0; i < pressureAndDateArr.length; i++) {
+            sum += parseInt(pressureAndDateArr[i][0]);
+          }
+          return sum / pressureAndDateArr.length;
+        }
+
+        function updateHistory(valuesAndDate) {
+            var oldText= $('#history').val();
+            $('#history').html(oldText + '\n' + valuesAndDate);
+        }
+
+    </script>
+</body>
+
+</html>

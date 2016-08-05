@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <title>Happy Night</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="sleeptime.css">
+    <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+</head>
+
+<body>
+
+    <div class="continer">
+        <div class="row">
+            <div class="col-xs-12 col-md-6">
+                <label id="text">Check Your</label>
+                <br />
+                <label id="text2">Sleeping Time</label>
+                <br />
+                <div class="div2">
+                    <div class="div1" id="sleep">
+                        <h1>
+                        How Many Hours of Sleep Do I Need?
+                      </h1>
+                    </div>
+                    <p>
+                      &emsp;&emsp;We tend to think of sleep as a time when the mind and body shut down. But this is not the case; sleep is an active period in which a lot of important processing, restoration, and strengthening occurs. Exactly how this happens and why our bodies are programmed for such a long period of slumber is still somewhat of a mystery. But scientists do understand some of sleep's critical functions, and the reasons we need it for optimal health and wellbeing.
+                    </p>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-6" id="right">
+                <div class="middle">
+                    <div class="div3">
+                        <div class="div1">
+                            Total Time
+                            <br />
+                            <label id="currentSleep"> </label>
+                        </div>
+                    </div>
+                </div>
+
+                  <br /><br /><br />
+                <br />
+                <br />
+                <div class="div3">
+                    Suggestion
+                </div>
+                <div class="div3">
+                    <button onclick=giveSuggestion(); class="btn btn-info">
+                        Show Suggestion
+                    </button>
+                    </div>
+                    <br />
+                    <div class="div4">
+                      <label id="suggestion" class="div4"> </label>
+                    </div>
+
+                <br />
+
+                <div class="div3">
+
+                </div>
+                <br />
+
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <div class="row">
+
+    </div>
+    <div class="row" id="next">
+      <a href="index.html"><button class="btn btn-danger">BACK</button></a>
+        <a href="index.html"><button class="btn btn-info">HOME</button></a>
+          <a href="humidity.html"><button class="btn btn-success">NEXT</button></a>
+    </div>
+
+  <!-- </div>
+  <div class="row" id="next">
+    <a href="index.html"><button class="btn btn-info">Next</button></a>
+  </div>
+
+    </div>
+    <div class="row" id="next">
+      <a href="humidity.html"><button class="btn btn-success">Next</button></a>
+    </div> -->
+
+    <script type="text/javascript">
+      var currentMessage = '';
+      var suggestionLabel = $("#suggestion");
+      var sleepTime = 0;
+      var totalTimeLabel = $("#currentSleep");
+
+      setInterval(function() {
+        $.ajax({
+          url: 'http://10.32.176.4/HP'
+        })
+        .done(function(data) {
+          if (data !== currentMessage) {
+            checkInput(data);
+            currentMessage = data;
+          }
+        })
+      }, 1000);
+
+      function checkInput(input) {
+        var inputArr = input.split(",");
+          if (inputArr[0] == 1)
+            recieveTime(inputArr[1]);
+      }
+
+      function recieveTime(timeInSecond) {
+        var date = new Date(null);
+        date.setSeconds(timeInSecond);
+        sleepTime = date.toISOString().substr(11, 8);
+        totalTimeLabel.text("You have slept for " + sleepTime + "hour");
+      }
+
+      function giveSuggestion() {
+        var hour = (sleepTime + '').substr(0,2);
+        if(hour == 0)
+          suggestionLabel.text('No information');
+        else if (hour >= 6 && hour < 10) {
+          suggestionLabel.text('Congratulation, you got enough sleep');
+        } else if (hour < 6) {
+          suggestionLabel.text('You sleep less than 6 hour. You will have a chance to be this sympton such as Heartbreak, Diabetes, and moody. You should Stop playing computer and smartphone before sleeping, Exercise everyday, and Stop drinking coffee.');
+        } else {
+          suggestionLabel.text('You sleep more than 9 hour. Their are many sympton for sleeping too much such as Damage your brain, Hard to get pregnant, and Can cause Diabetes. You should Sleep and wake up on time, Exercise every day, and Stop drinking coffee.') ;
+        }
+      }
+      </script>
+</body>
+
+</html>

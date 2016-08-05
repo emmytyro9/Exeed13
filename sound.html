@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <title>Happy Night</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="sound.css">
+    <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+</head>
+
+<body>
+
+    <div class="continer">
+        <div class="row">
+            <div class="col-xs-12 col-md-6" id="left">
+                <label id="text">Check Your</label>
+                <br />
+                <label id="text2">Snoring</label>
+                <br />
+                <div class="div2" id="snor">
+                    <div class="div1">
+                        <h1>
+                        Snoring
+                      </h1>
+                    </div>
+                    <p>&emsp;&emsp;Snoring is a sound resulting from turbulent airflow that causes the tissues of the nose and throat to vibrate during sleep. The turbulent air flow is related to a narrowing at some point in the nose, mouth, or throat. Different people who snore may have
+                    various reasons for the narrowing of the air spaces leading to snoring.
+                  </p>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-6" id="right">
+                <div class="middle">
+                    <br />
+                    <br />
+                    <div class="div3">
+                        <div class="div1">
+                            Current Decibel
+                            <br />
+                            <label id="currentSound"> </label>
+                        </div>
+                    </div>
+                </div>
+
+                <br />
+                <br />
+                <div class="div3">
+                    Suggestion
+                    <label id="suggestion"> </label>
+                </div>
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <div class="div3">
+                    <button type="button" class="btn btn-info" onclick = giveSuggestion();>
+                        Show Suggestion
+                    </button>
+                </div>
+                <br />
+                <div class="div3">
+                    <div class="div1">
+                        REALTIME ACTION
+                    </div>
+                </div>
+                <div class="div5">
+                <textarea disabled id="history" name="name" rows="5" cols="30"></textarea>
+              </div>
+
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <div class="row">
+
+    </div>
+    <div class="row" id="next">
+      <a href="gyro.html"><button class="btn btn-danger">BACK</button></a>
+      <a href="index.html"><button class="btn btn-info">HOME</button></a>
+      <a href="temperature.html"><button class="btn btn-success">NEXT</button></a>
+    </div>
+
+    <script type="text/javascript">
+      var currentMessage = '';
+      var currentSoundLabel = $("#currentSound");
+      var sound = 0;
+      var suggestionLabel = $("#suggestion");
+      var lbl = '';
+      var date;
+      var soundArr = [];
+      var soundAndDateArr = [];
+
+      $(document).ready(function() {
+        currentSoundLabel.text(sound);
+      });
+
+      setInterval(function() {
+        $.ajax({
+          url: 'http://10.32.176.4/HP'
+        })
+        .done(function(data) {
+          if (data !== currentMessage) {
+            checkInput(data);
+          }
+        })
+      }, 1000);
+
+      function checkInput(input) {
+        var inputArr = input.split(",");
+          if (inputArr[0] == 4)
+            recieveSound(inputArr[1]);
+      }
+
+      function recieveSound(info) {
+        sound = info;
+        date = new Date();
+        var soundTime = date.toLocaleTimeString() + ' ' + date.toDateString();
+        soundAndDateArr.push([sound, soundTime]);
+        updateHistory(sound + 'dB ' + soundTime);
+        currentSoundLabel.text(sound + ' dB') ;
+      }
+
+      function giveSuggestion() {
+        var averageSound = findAverage();
+        if(Number.isNaN(averageSound))
+          suggestionLabel.text('No information');
+        else if (averageSound >= 30 && averageSound < 45) {
+            suggestionLabel.text('Average sound level: ' + averageSound + ' dB' + '    You did not snore or just a little bit while sleeping which is good. Sleep well.') ;
+        } else if (averageSound < 30) {
+            suggestionLabel.text('Average sound level: ' + averageSound + ' dB' + '    You did not snore or just a little bit while sleeping which is good. Sleep well.') ;
+        } else {
+            suggestionLabel.text('Average sound level: ' + averageSound + ' dB' + '    you snore loudly it can cause obstructive sleep apena (OSA). Please check that you have this sympton or not? 1) Your friend/family told you that you snore really loud. 2) You snore loud and quite frequently sometime breathe deeply while sleeping. 3) Want to take a nap or sleep while meeting.') ;
+        }
+      }
+
+      function findAverage() {
+        var sum = 0;
+        for (var i = 0; i < soundAndDateArr.length; i++) {
+          sum += parseInt(soundAndDateArr[i][0]);
+        }
+        return sum / soundAndDateArr.length;
+      }
+
+      function updateHistory(valuesAndDate) {
+          var oldText= $('#history').val();
+          $('#history').html(oldText + '\n' + valuesAndDate);
+          $('#history').scrollTop($('#history')[0].scrollHeight);
+      }
+    </script>
+</body>
+
+</html>

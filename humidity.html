@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <title>Happy Night</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="humidity.css">
+    <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+</head>
+
+<body>
+
+    <div class="continer">
+        <div class="row">
+            <div class="col-xs-12 col-md-6" id="left">
+                <label id="text">Check Your</label>
+                <br />
+                <label id="text2">Huminity</label>
+                <br />
+                <div id="hum" class="div2">
+                    <div class="div1">
+                        <h1>
+                        Humidity
+                      </h1>
+                    </div>
+                    <p>Humidity is the amount of water vapor in the air. Water vapor is the gaseous state of water and is invisible. Humidity indicates the likelihood of precipitation, dew, or fog.</p>
+                </div>
+            </div>
+            <div id="right" class="col-xs-12 col-md-6">
+                <div class="middle">
+                    <br />
+                    <br />
+                    <div class="div3">
+                        <div class="div1">
+                            Current Humidity
+                            <br />
+                            <label id="currentHuminity"> </label>
+                        </div>
+                    </div>
+                </div>
+
+                <br />
+                <br />
+                <div class="div3">
+                    Suggestion
+                </div>
+                <div class="div3">
+                    <button onclick= giveSuggestion(); class="btn btn-info">
+                        Show Suggestion
+                    </button>
+                    <br />
+                    <label id="suggestion"> </label>
+                </div>
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <div class="div3">
+
+                </div>
+                <br />
+                <div class="div3">
+                    <div class="div1">
+                        REALTIME ACTION
+                    </div>
+                </div>
+                <div class="div5">
+                <textarea disabled id="history" name="name" rows="5" cols="30"></textarea>
+              </div>
+
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <div class="row">
+
+    </div>
+    <div class="row" id="next">
+      <a href="sleeptime.html"><button class="btn btn-danger">BACK</button></a>
+        <a href="gyro.html"><button class="btn btn-info">HOME</button></a>
+          <a href="gyro.html"><button class="btn btn-success">NEXT</button></a>
+    </div>
+
+    <script type="text/javascript">
+        var currentMessage;
+        var currentHumidityLabel = $("#currentHuminity");
+        var humidity = 0;
+        var suggestionLabel = $("#suggestion");
+        var lbl = '';
+        var date;
+        var humidityArr = [];
+        var humidityAndDateArr = [];
+
+        $(document).ready(function() {
+            currentHumidityLabel.text(humidity);
+        });
+
+        setInterval(function() {
+            $.ajax({
+                  url: 'http://10.32.176.4/HP'
+            }).done(function(info) {
+                if (info !== currentMessage) {
+                    checkInput(info);
+                    currentMessage = info;
+
+                }
+            })
+        }, 1000);
+
+
+        function checkInput(input) {
+            var inputArr = input.split(",");
+            if (inputArr[0] == '6') {
+                recieveHumidity(inputArr[1]) ;
+        }
+      }
+
+
+        function recieveHumidity(info) {
+            date = new Date();
+            humidity = info;
+            var humidityTime = date.toLocaleTimeString() + ' ' + date.toDateString();
+            humidityAndDateArr.push([humidity, humidityTime]);
+            currentHumidityLabel.text(humidity + '%') ;
+            updateHistory(humidity + '% ' + humidityTime);
+        }
+
+        function giveSuggestion() {
+          var averageHumidity = findAverage();
+          if(Number.isNaN(averageHumidity))
+            suggestionLabel.text('No information');
+          else if (averageHumidity >= 30 && averageHumidity < 55) {
+            suggestionLabel.text('Average humidity: ' + averageHumidity + '%' + '    Your humidity is normal which is suitable for your body now.');
+          } else if (averageHumidity < 50) {
+            suggestionLabel.text('Average humidity: ' + averageHumidity + '%' + '    Your humidity is lower than 35%. This can cause dry skin ,sick and flu.') ;
+          } else {
+            suggestionLabel.text('Average humidity: ' + averageHumidity + '%' + '    Your humidity is higher than the limit. This can cause allgery, sick and growing rate of fungi.') ;
+          }
+        }
+        function findAverage() {
+          var sum = 0;
+          for(var i = 0; i < humidityAndDateArr.length; i++) {
+            sum += parseFloat(humidityAndDateArr[i][0]);
+          }
+          return sum / humidityAndDateArr.length;
+        }
+
+        function updateHistory(valuesAndDate) {
+            var oldText= $('#history').val();
+            $('#history').html(oldText + '\n' + valuesAndDate);
+            $('#history').scrollTop($('#history')[0].scrollHeight);
+        }
+    </script>
+</body>
+
+</html>

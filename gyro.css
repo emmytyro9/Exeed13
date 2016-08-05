@@ -1,0 +1,153 @@
+html {
+    height: 400px;
+    background-color: ##CF000F;
+    font-family: serif;
+}
+body {
+    background: url("images/ferris1.jpg") no-repeat;
+}
+#next{
+  font-family: "Century Gothic";
+  text-align: right;
+  margin-right: 30px;
+  margin-bottom: 30px;
+}
+p{
+  font-family: "Century Gothic";
+  font-size: 18px;
+}
+#container {
+    font-family: "Century Gothic";
+    background-color: black;
+    font-size: 40px;
+}
+#text {
+    font-size: 50px;
+    color: #6E6E6E;
+    font-family: "Century Gothic";
+}
+#text2 {
+    font-size: 90px;
+      color: #6E6E6E;
+    font-family: "Century Gothic";
+}
+.div1 {
+    font-size: 30px;
+    font-family: "Century Gothic";
+    color: white;
+}
+.div4 {
+  font-size: 17px ;
+    text-align: center;
+    font-family: "Century Gothic";
+    color: white;
+}
+.div2 {
+    color: white;
+    font-family: "Century Gothic";
+}
+.div3 {
+    font-size: 30px;
+    text-align: center;
+    color: white;
+    font-family: "Century Gothic";
+}
+#middle {
+    text-align: center;
+    font-family: "Century Gothic";
+}
+
+@media (min-width: 1200px) {
+  body {
+      background: url("images/ferris1.jpg") no-repeat;
+      width: auto;
+      height: auto;
+  }    #text {
+        margin-top: 170px;
+    }
+}
+
+}
+@media (min-width: 992px) and (max-width: 1199px) {
+  body {
+      background: url("images/ferris1.jpg") no-repeat;
+      width: auto;
+      height: auto;
+  }
+    p{
+      font-size: 20px;
+    }
+    #text {
+        font-size: 40px;
+        margin-top: 160px;
+    }
+    #text2 {
+        font-size: 120px;
+    }
+    #sleep {
+        text-align: center;
+    }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+  body {
+      background: url("images/ferris1.jpg") no-repeat;
+      width: auto;
+      height: auto;
+  }
+    p{
+      font-size: 18px;
+    }
+    #text {
+        font-size: 30px;
+        margin-top: 20px;
+    }
+    #text2 {
+        font-size: 90px;
+    }
+    #sleep {
+        text-align: center;
+    }
+}
+@media (max-width: 767px) {
+  body {
+      background: url("images/ferris1.jpg") no-repeat;
+      width: auto;
+      height: auto;
+  }
+    p{
+      font-size: 12px;
+    }
+    #text {
+        font-size: 25px;
+        margin-top: 20px;
+    }
+    #text2 {
+        font-size: 45px;
+    }
+    #sleep {
+        text-align: center;
+    }
+}
+@media (max-width: 480px) {
+    body {
+        background: url("images/ferris1.jpg") no-repeat;
+        width: auto;
+        height: auto;
+    }
+    p{
+      font-size: 10
+
+      px;
+    }
+    #text {
+        font-size: 20px;
+        margin-top: 20px;
+    }
+    #text2 {
+        font-size: 30px;
+    }
+    #sleep {
+        text-align: center;
+        font-size: 10px;
+    }
+}

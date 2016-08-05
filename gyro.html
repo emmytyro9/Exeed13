@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <title>Happy Night</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="gyro.css">
+    <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+</head>
+
+<body>
+
+    <div class="continer">
+        <div class="row">
+            <div class="col-xs-12 col-md-6">
+                <label id="text">Check Your</label>
+                <br />
+                <label id="text2">Movement</label>
+                <br />
+                <div class="div2" id="sleep">
+                    <div class="div1">
+                        <h1>
+                        Sleep Movement
+                      </h1>
+                    </div>
+                    <p>&emsp;&emsp;
+                        Tossing and turning generally occurs during brief arousals from sleep during the night. Before each repositioning movement, the cortical EEG signals go from large slow activity of the sleep state, to the low voltage fast activity of the awake individual,
+                        but will only do so briefly before the person shifts position and falls back asleep. Because there is sleep inertia, which causes most people not to remember what happens in the last few minutes of consciousness before sleep, most
+                        people do not remember moving around during the night unless their arousal lasts longer than a few seconds. Once asleep again, people will not toss or turn under normal conditions.
+                    </p>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-6">
+                <div class="middle">
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <div class="div3">
+                        <div class="div1">
+                            Current Movement
+                            <br />
+                            <label id="currentGyro"> </label>
+                        </div>
+                    </div>
+                </div>
+
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <div class="div3">
+                    Suggestion
+                </div>
+                <div class="div3">
+                    <button onclick= giveSuggestion(); class="btn btn-info">
+                        Show Suggestion
+                    </button>
+                </div>
+                <br />
+                <div class="div4">
+                    <label id="suggestion" class="div4"> </label>
+                </div>
+
+                <br />
+
+                <br />
+
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <div class="row">
+
+    </div>
+    <div class="row" id="next">
+      <a href="humidity.html"><button class="btn btn-danger">BACK</button></a>
+        <a href="index.html"><button class="btn btn-info">HOME</button></a>
+          <a href="sound.html"><button class="btn btn-success">NEXT</button></a>
+    </div>
+
+    <script type="text/javascript">
+      var currentMessage = '';
+      var currentGyroLabel = $("#currentGyro");
+      var suggestionLabel = $("#suggestion");
+      var lbl = '';
+      var timeHeadFlip = 0;
+      var gyroAndDateArr = [];
+        setInterval(function() {
+            $.ajax({
+                    url: 'http://10.32.176.4/HP'
+                })
+                .done(function(data) {
+                    if (data !== currentMessage) {
+                        checkInput(data);
+                        currentMessage = data;
+                    }
+                })
+        }, 1000);
+
+        function checkInput(input) {
+            var inputArr = input.split(",");
+            if (inputArr[0] == 5)
+                recieveGyro();
+        }
+
+        function recieveGyro() {
+            timeHeadFlip += 1;
+            date = new Date();
+            var gyroTime = date.toLocaleTimeString() + ' ' + date.toDateString();
+            gyroAndDateArr.push([timeHeadFlip, gyroTime]);
+            var gyroStr = timeHeadFlip + ' time(s)';
+            currentGyroLabel.text(gyroStr);
+            updateHistory(gyroStr + ' ' + gyroTime)
+        }
+
+        function giveSuggestion() {
+            if (Number.isNaN(timeHeadFlip) || timeHeadFlip == 0) {
+                suggestionLabel.text('No information');
+            } else if (timeHeadFlip < 5 ) {
+                suggestionLabel.text('You turn oneself over a few time so you will be stiff this is suggestion for you if you feel stiff 1)Lie supine will help you if you feel stiff at your back or your sholuder. 2)Sleep on ones side and lie supine will help you from stiffing your neck.   ');
+            } else {
+                suggestionLabel.text('you turn oneself over alot. If you turn oneself over many time in one night you will not be stiff and can sleep well');
+            }
+        }
+
+        function updateHistory(valuesAndDate) {
+            var oldText = $('#history').val();
+            $('#history').html(oldText + '\n total ' + valuesAndDate + 'time(s)');
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <title>Happy night application</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="index.css">
+    <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+</head>
+
+<body>
+    <div class="row">
+        <div id="container" class="col-xs-12 col-md-6 col-md-offset-3">
+            <img id="header" src="images/header.jpg" />
+            <br />
+            <br />
+            <div id="time">
+                <label id="timeLabel"></label>
+                <br />
+                <label id="date"></label>
+            </div>
+        </div>
+        <div class="row">
+            <div id="timeSet">
+                <div id="alarmLabel">
+                    <label id="alarmHour" class="col-md-1 col-md-offset-3">HOUR</label>
+                    <label id="alarmMinute" class="col-md-1 col-md-offset-1">MINUTE</label>
+                    <label id="alarmSecond" class="col-md-1 col-md-offset-1">SECOND</label>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="in">
+            <input class="col-md-1 col-md-offset-3" id="hourField" />
+            <input class="col-md-1 col-md-offset-1" id="minuteField" />
+            <input class="col-md-1 col-md-offset-1" id="secondField" />
+        </div>
+        <br />
+
+        <div class="col-xs-12 col-md-6 col-md-offset-3">
+            <button id="setTimeB" class="btn btn-success btn-lg">Submit</button>
+            <button id="recommendB" class="btn btn-info btn-lg" onclick = setRecommendTime();>Recommended</button>
+
+            <div id="cancel">
+                <br />
+                <button id="cancelAlarm" class="btn btn-danger btn-lg">Cancel alarm</button>
+            </div>
+            <div id="page-linked-container">
+                <nav id="bar" aria-label="Page navigation">
+                    <ul class="pagination">
+                        <li>
+                            <a href="temperature.html" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li><a href="sleeptime.html">Time</a></li>
+                        <li><a href="humidity.html">Humidity</a></li>
+                        <li><a href="gyro.html">Movement</a></li>
+                        <li><a href="sound.html">Snore</a></li>
+                        <li><a href="temperature.html">Temperature</a></li>
+                        <li>
+                            <a href="sleeptime.html" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+        </div>
+        <div id="end-part" class="col-xs-12 col-md-6 col-md-offset-3">
+            <img id="logo" src="images/logo.png" />
+        </div>
+
+        <script type="text/javascript">
+            var alarmHour = $("#alarmHour");
+            var alarmMinute = $("#alarmMinute");
+            var alarmSecond = $("#alarmSecond");
+            var cancelAlarm = $("#cancelAlarm");
+            var hour = 25;
+            var minute = 61;
+            var second = 61;
+            $(document).ready(function() {
+                $("#date").text(new Date().toDateString());
+
+            });
+
+            $(document).ready(function() {
+                $("#timeLabel").text(new Date().toLocaleTimeString());
+            });
+
+            $("#setTimeB").click(function() {
+                hour = parseInt($("#hourField").val());
+                if ($("#hourField").val() === "") {
+                    hour = 26;
+                }
+                if (hour >= 0 && hour < 24) {
+                    alarmHour.css('color', 'white');
+                    alarmHour.text(hour + '');
+                } else {
+                    alarmHour.css('color', 'red');
+                    alarmHour.text('Invalid input');
+                }
+                $("#hourField").val("");
+
+                minute = parseInt($("#minuteField").val());
+                if (minute >= 0 && minute < 60) {
+                    alarmMinute.css('color', 'white');
+                    alarmMinute.text(minute + '');
+                } else {
+                    alarmMinute.css('color', 'red');
+                    alarmMinute.text('Invalid input');
+                }
+                $("#minuteField").val("");
+
+                second = parseInt($("#secondField").val());
+                if (second >= 0 && second < 60) {
+                    alarmSecond.css('color', 'white');
+                    alarmSecond.text(second + '');
+                } else {
+                    alarmSecond.css('color', 'red');
+                    alarmSecond.text('Invalid input');
+                }
+                $("#secondField").val("");
+
+                sendAwakeTime(hour + ':' + minute + ':' + second);
+            });
+
+            cancelAlarm.click(function() {
+                hour = 25;
+                minute = 61;
+                second = 61;
+                alarmHour.text('HOUR');
+                alarmMinute.text('MINUTE');
+                alarmSecond.text('SECOND');
+                alarmHour.css('color', 'white');
+                alarmMinute.css('color', 'white');
+                alarmSecond.css('color', 'white');
+                $("#hourField").val("");
+                $("#minuteField").val("");
+                $("#secondField").val("");
+                sendData('Cancel');
+            });
+
+            setInterval(function() {
+                var date = new Date();
+                $("#timeLabel").text(date.toLocaleTimeString());
+                $("#date").text(date.toDateString());
+                checkIsAlarm();
+            }, 1000);
+
+            function checkIsAlarm() {
+                var date = new Date();
+                var currHour = date.getHours();
+                var currMinute = date.getMinutes();
+                var currSecond = date.getSeconds();
+                if (hour === currHour && minute === currMinute && second === currSecond)
+                    sendData('Wake');
+            }
+
+            function sendAwakeTime(time) {
+                sendData(time);
+            }
+
+            function sendData(data) {
+                $.ajax({
+                    url: 'http://10.32.176.4/HP/' + data,
+                    success: function(data) {
+                        console.log('success');
+                    },
+                    error: function(err) {
+                        console.log(err);
+                    }
+                });
+            }
+
+            function setRecommendTime() {
+                hour = 7;
+                minute = 0;
+                second = 0;
+                alarmHour.text(hour + '');
+                alarmMinute.text(minute + '');
+                alarmSecond.text(second + '');
+                alarmHour.css('color', 'white');
+                alarmMinute.css('color', 'white');
+                alarmSecond.css('color', 'white');
+                $("#hourField").val("");
+                $("#minuteField").val("");
+                $("#secondField").val("");
+                sendAwakeTime(hour + ':' + minute + ':' + second);
+            }
+        </script>
+
+</body>
+
+</html>
